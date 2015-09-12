@@ -38,11 +38,7 @@ class Main extends PluginBase{
     }
 
     public function onDisable(){
-        $data = [];
-        foreach($this->areas as $area){
-            $data[] = ["pos1" => $area->min, "pos2" => $area->max, "level" => $area->level, "owner" => $area->owner, "whiteList" => $area->whiteList];
-        }
-        file_put_contents($this->getDataFolder()."areas.json", json_encode($data));
+        $this->saveToFile();
     }
 
     public function onCommand(CommandSender $sender, Command $command, $label, array $args){
@@ -101,6 +97,7 @@ class Main extends PluginBase{
                     }
                     $this->areas[] = new Area($this, $pos1, $pos2, $this->selections[$sender->getName()]["pos2"]["level"], $sender->getName());
                     $sender->sendMessage("Area created succesfully");
+                    $this->saveToFile();
                     unset($this->selections[$sender->getName()]);
                     return true;
                 break;
@@ -118,6 +115,7 @@ class Main extends PluginBase{
                         }
                     }
                     $sender->sendMessage("Stand inside your area and type this command to delete it");
+                    $this->saveToFile();
                     return true;
                 break;
                 case "whitelist":
@@ -199,6 +197,19 @@ class Main extends PluginBase{
 
     private function isAreaTooBig(array $pos1, array $pos2){
         return $this->getConfig()->get("max-distance") === 0 ? false : (($pos1[0] - $pos2[0]) ** 2 + ($pos1[1] - $pos2[1]) ** 2 + ($pos1[2] - $pos2[2]) ** 2) > $this->getConfig()->get("max-distance") ** 2;
+    }
+
+    /**
+     * saveToFile
+     * writes all custom areas into the file.
+     * prevents lost on fatal server crashes or hard shutdowns
+     */
+    public function saveToFile(){
+        $data = [];
+        foreach($this->areas as $area){
+            $data[] = ["pos1" => $area->min, "pos2" => $area->max, "level" => $area->level, "owner" => $area->owner, "whiteList" => $area->whiteList];
+        }
+        file_put_contents($this->getDataFolder()."areas.json", json_encode($data));
     }
 
 }
