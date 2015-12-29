@@ -16,6 +16,7 @@ class Main extends PluginBase{
     /*
      * array areasData[
      *   0 => [
+     *     'id' => 'xy123'
      *     'pos1' => [1, 2, 3]
      *     'pos2' => [3, 4, 5]
      *     'level' => survival
@@ -102,7 +103,7 @@ class Main extends PluginBase{
                     return true;
                 break;
                 case "delete":
-                    if (!isset($args[0])){
+                    if (isset($args[0])){
                         foreach($this->areas as $key => $area){
                             if($area->hasId($args[0])){
                                 if(!$sender->hasPermission("customareas.bypass")){
