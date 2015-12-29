@@ -102,21 +102,35 @@ class Main extends PluginBase{
                     return true;
                 break;
                 case "delete":
-                    $name = strtolower($sender->getName());
-                    foreach($this->areas as $key => $area){
-                        if($area->isInside($sender)){
-                            if($area->owner !== $name and !$sender->hasPermission("customareas.bypass")){
-                                $sender->sendMessage("This is not your area");
+                    if (!isset($args[0])){
+                        foreach($this->areas as $key => $area){
+                            if($area->hasId($args[0])){
+                                if(!$sender->hasPermission("customareas.bypass")){
+                                    $sender->sendMessage("Yout dont have permissions to delete the area");
+                                    return true;
+                                }
+                                unset($this->areas[$key]);
+                                $sender->sendMessage("Area deleted");
                                 return true;
                             }
-                            unset($this->areas[$key]);
-                            $sender->sendMessage("Area deleted");
-                            return true;
                         }
+                    } else {
+                        $name = strtolower($sender->getName());
+                        foreach($this->areas as $key => $area){
+                            if($area->isInside($sender)){
+                                if($area->owner !== $name and !$sender->hasPermission("customareas.bypass")){
+                                    $sender->sendMessage("This is not your area");
+                                    return true;
+                                }
+                                unset($this->areas[$key]);
+                                $sender->sendMessage("Area deleted");
+                                return true;
+                            }
+                        }
+                        $sender->sendMessage("Stand inside your area and type this command to delete it");
+                        $this->saveToFile();
+                        return true;
                     }
-                    $sender->sendMessage("Stand inside your area and type this command to delete it");
-                    $this->saveToFile();
-                    return true;
                 break;
                 case "whitelist":
                     if(!isset($args[0])){
@@ -206,8 +220,12 @@ class Main extends PluginBase{
      */
     public function saveToFile(){
         $data = [];
-        foreach($this->areas as $area){
-            $data[] = ["pos1" => $area->min, "pos2" => $area->max, "level" => $area->level, "owner" => $area->owner, "whiteList" => $area->whiteList];
+        $counter = 0;
+        foreach($this->areas as $key => $area){
+            $counter++;
+            $area->id = strtolower(substr($area->owner,0,2).$counter);
+            $this->areas[$key] = $area;
+            $data[] = ["id" => $area->id, "pos1" => $area->min, "pos2" => $area->max, "level" => $area->level, "owner" => $area->owner, "whiteList" => $area->whiteList];
         }
         file_put_contents($this->getDataFolder()."areas.json", json_encode($data));
     }
