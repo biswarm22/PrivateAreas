@@ -33,7 +33,7 @@ class Main extends PluginBase{
         if(file_exists($this->getDataFolder()."areas.json")){
             $areasData = json_decode(file_get_contents($this->getDataFolder()."areas.json"), true);
             foreach($areasData as $area){
-                $this->areas[] = new Area($this, $area["pos1"], $area["pos2"], $area["level"], $area["owner"], $area["whiteList"], $area["id"]);
+                $this->areas[] = new Area($this, $area["pos1"], $area["pos2"], $area["level"], $area["owner"], $area["whiteList"], (!empty($area["id"])) ? $area["id"] : null);
             }
         }
         $this->getServer()->getPluginManager()->registerEvents(new EventListener($this), $this);
@@ -103,40 +103,41 @@ class Main extends PluginBase{
                     unset($this->selections[$sender->getName()]);
                     return true;
                 break;
-                case "delete":
-                    if (isset($args[0])){
-                        if(!$sender->hasPermission("customareas.remove")){
-                            $sender->sendMessage("Yout dont have permissions to delete the area");
-                            return true;
-                        }
-                        foreach($this->areas as $key => $area){
-                            if($area->id == $args[0]){
-                                unset($this->areas[$key]);
-                                $this->saveToFile();
-                                $sender->sendMessage("Area deleted");
-                                return true;
-                            }
-                        }
-                        $sender->sendMessage("Unknown Area");
-                        return true;
-                    } else {
-                        $name = strtolower($sender->getName());
-                        foreach($this->areas as $key => $area){
-                            if($area->isInside($sender)){
-                                if($area->owner !== $name and !$sender->hasPermission("customareas.bypass")){
-                                    $sender->sendMessage("This is not your area");
-                                    return true;
-                                }
-                                unset($this->areas[$key]);
-                                $this->saveToFile();
-                                $sender->sendMessage("Area deleted");
-                                return true;
-                            }
-                        }
-                        $sender->sendMessage("Stand inside your area and type this command to delete it");
-                        $this->saveToFile();
+                case "remove":
+                    if(!isset($args[0])){
+                        $sender->sendMessage("Usage: /area remove ID");
+                    }
+                    if(!$sender->hasPermission("customareas.remove")){
+                        $sender->sendMessage("Yout dont have permissions to delete the area");
                         return true;
                     }
+                    foreach($this->areas as $key => $area){
+                        if($area->id == $args[0]){
+                            unset($this->areas[$key]);
+                            $this->saveToFile();
+                            $sender->sendMessage("Area deleted");
+                            return true;
+                        }
+                    }
+                    $sender->sendMessage("Unknown Area");
+                    return true;
+                case "delete":
+                    $name = strtolower($sender->getName());
+                    foreach($this->areas as $key => $area){
+                        if($area->isInside($sender)){
+                            if($area->owner !== $name and !$sender->hasPermission("customareas.bypass")){
+                                $sender->sendMessage("This is not your area");
+                                return true;
+                            }
+                            unset($this->areas[$key]);
+                            $this->saveToFile();
+                            $sender->sendMessage("Area deleted");
+                            return true;
+                        }
+                    }
+                    $sender->sendMessage("Stand inside your area and type this command to delete it");
+                    $this->saveToFile();
+                    return true;
                 break;
                 case "whitelist":
                     if(!isset($args[0])){
