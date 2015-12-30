@@ -106,6 +106,7 @@ class Main extends PluginBase{
                 case "remove":
                     if(!isset($args[0])){
                         $sender->sendMessage("Usage: /area remove ID");
+                        return true;
                     }
                     if(!$sender->hasPermission("customareas.remove")){
                         $sender->sendMessage("Yout dont have permissions to delete the area");
@@ -215,6 +216,7 @@ class Main extends PluginBase{
                 case "tp":
                     if(!isset($args[0])){
                         $sender->sendMessage("Usage: /area tp ID");
+                        return true;
                     }
                     if(!$sender->hasPermission("customareas.tp")){
                         $sender->sendMessage("Yout dont have permissions for teleport to the area");
