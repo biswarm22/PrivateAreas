@@ -32,7 +32,7 @@ class Main extends PluginBase{
         if(file_exists($this->getDataFolder()."areas.json")){
             $areasData = json_decode(file_get_contents($this->getDataFolder()."areas.json"), true);
             foreach($areasData as $area){
-                $this->areas[] = new Area($this, $area["pos1"], $area["pos2"], $area["level"], $area["owner"], $area["whiteList"]);
+                $this->areas[] = new Area($this, $area["pos1"], $area["pos2"], $area["level"], $area["owner"], $area["whiteList"], $area["id"]);
             }
         }
         $this->getServer()->getPluginManager()->registerEvents(new EventListener($this), $this);
@@ -105,7 +105,7 @@ class Main extends PluginBase{
                 case "delete":
                     if (isset($args[0])){
                         foreach($this->areas as $key => $area){
-                            if($area->hasId($args[0])){
+                            if($area->id == $args[0]){
                                 if(!$sender->hasPermission("customareas.bypass")){
                                     $sender->sendMessage("Yout dont have permissions to delete the area");
                                     return true;
@@ -158,6 +158,7 @@ class Main extends PluginBase{
                                     if(!in_array(strtolower($args[0]), $area->whiteList)){
                                         $this->areas[$key]->whiteList[] = strtolower($args[0]);
                                     }
+                                    $this->saveToFile();
                                     $sender->sendMessage("Added ".$args[0]." to whiteList");
                                     return true;
                                 }
@@ -225,9 +226,11 @@ class Main extends PluginBase{
      */
     public function saveToFile(){
         $data = [];
+        $seed = 0;
         foreach($this->areas as $key => $area){
+            $seed++;
             if($area->id == null) {
-                $area->id = strtolower(substr($area->owner,0,3).substr(md5(time()), 4, 4));
+                $area->id = strtolower(substr($area->owner,0,3).substr(md5($area->owner.time().$seed), 4, 4));
                 $this->areas[$key] = $area;
             }
             $data[] = ["id" => $area->id, "pos1" => $area->min, "pos2" => $area->max, "level" => $area->level, "owner" => $area->owner, "whiteList" => $area->whiteList];
