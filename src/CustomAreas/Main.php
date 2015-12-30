@@ -6,6 +6,7 @@ use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 use pocketmine\Player;
 use pocketmine\plugin\PluginBase;
+use pocketmine\math\Vector3;
 
 class Main extends PluginBase{
 
@@ -209,6 +210,25 @@ class Main extends PluginBase{
                             $sender->sendMessage("Usage: /area whitelist add/remove/list");
                             return true;
                     }
+                break;
+                case "tp":
+                    if(!isset($args[0])){
+                        $sender->sendMessage("Usage: /area tp ID");
+                    }
+                    if(!$sender->hasPermission("customareas.tp")){
+                        $sender->sendMessage("Yout dont have permissions for teleport to the area");
+                        return true;
+                    }
+                    foreach($this->areas as $key => $area){
+                        if($area->id == $args[0]){
+                            $target = $area->max;
+                            $sender->teleport(new Vector3($target[0], $target[1], $target[2]));
+                            $sender->sendMessage("Teleporting to Area: " . $area->id);
+                            return true;
+                        }
+                    }
+                    $sender->sendMessage("Unknown Area");
+                    return true;
                 break;
             }
         }

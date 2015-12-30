@@ -10,7 +10,7 @@ website: https://github.com/ecoron/CustomAreas
 commands:
  customareas:
   description: Manage areas
-  usage: "/area pos1|pos2|create|delete|whitelist"
+  usage: "/area pos1|pos2|create|delete|whitelist|tp|remove"
   aliases: [area, ca, areas]
   permission: customareas.command
 permissions:
@@ -19,6 +19,9 @@ permissions:
   default: true
  customareas.remove:
   description: "Allows removal of areas created by other players"
+  default: op
+ customareas.tp:
+  description: "Allows teleporting to an area"
   default: op
  customareas.bypass:
   description: "Allows to have admin features"
