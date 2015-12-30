@@ -111,10 +111,13 @@ class Main extends PluginBase{
                                     return true;
                                 }
                                 unset($this->areas[$key]);
+                                $this->saveToFile();
                                 $sender->sendMessage("Area deleted");
                                 return true;
                             }
                         }
+                        $sender->sendMessage("Unknown Area");
+                        return true;
                     } else {
                         $name = strtolower($sender->getName());
                         foreach($this->areas as $key => $area){
@@ -124,6 +127,7 @@ class Main extends PluginBase{
                                     return true;
                                 }
                                 unset($this->areas[$key]);
+                                $this->saveToFile();
                                 $sender->sendMessage("Area deleted");
                                 return true;
                             }
@@ -221,11 +225,11 @@ class Main extends PluginBase{
      */
     public function saveToFile(){
         $data = [];
-        $counter = 0;
         foreach($this->areas as $key => $area){
-            $counter++;
-            $area->id = strtolower(substr($area->owner,0,2).$counter);
-            $this->areas[$key] = $area;
+            if($area->id == null) {
+                $area->id = strtolower(substr($area->owner,0,3).substr(md5(time()), 4, 4));
+                $this->areas[$key] = $area;
+            }
             $data[] = ["id" => $area->id, "pos1" => $area->min, "pos2" => $area->max, "level" => $area->level, "owner" => $area->owner, "whiteList" => $area->whiteList];
         }
         file_put_contents($this->getDataFolder()."areas.json", json_encode($data));
