@@ -104,12 +104,12 @@ class Main extends PluginBase{
                 break;
                 case "delete":
                     if (isset($args[0])){
+                        if(!$sender->hasPermission("customareas.remove")){
+                            $sender->sendMessage("Yout dont have permissions to delete the area");
+                            return true;
+                        }
                         foreach($this->areas as $key => $area){
                             if($area->id == $args[0]){
-                                if(!$sender->hasPermission("customareas.bypass")){
-                                    $sender->sendMessage("Yout dont have permissions to delete the area");
-                                    return true;
-                                }
                                 unset($this->areas[$key]);
                                 $this->saveToFile();
                                 $sender->sendMessage("Area deleted");
