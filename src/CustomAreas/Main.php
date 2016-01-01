@@ -241,8 +241,8 @@ class Main extends PluginBase{
                         return true;
                     }
                     foreach($this->areas as $key => $area){
-                        if($area->isInside($event->getPlayer()->getPosition())){
-                            $event->getPlayer()->sendMessage("You are in " . $area->owner . "'s private area ID: " . $area->id);
+                        if($area->isInside($sender->getPosition())){
+                            $sender->sendMessage("You are in " . $area->owner . "'s private area ID: " . $area->id);
                             return true;
                         }
                     }

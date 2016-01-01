@@ -56,10 +56,10 @@ class EventListener implements Listener{
             $playerName = strtolower($event->getPlayer()->getName());
             foreach($this->plugin->areas as $area){
                 if($area->isInside($event->getPlayer()->getPosition())){
-                    if(!array_key_exists($playerName, $this->plugin->activePlayers){
+                    if(!array_key_exists($playerName, $this->plugin->activePlayers)){
                         $this->plugin->activePlayers[$playerName] = array();
                     }
-                    if(!array_key_exists($area->id, $this->plugin->activePlayers[$playerName]) || $this->plugin->activePlayers[$playerName][$area->id] <= (time()- 120){
+                    if(!array_key_exists($area->id, $this->plugin->activePlayers[$playerName]) || $this->plugin->activePlayers[$playerName][$area->id] <= (time()- 120)){
                         $this->plugin->activePlayers[$playerName][$area->id] = time();
                         if($playerName != $area->owner) {
                             $event->getPlayer()->sendMessage("You are in " . $area->owner . "'s private area ID: " . $area->id);
@@ -73,14 +73,14 @@ class EventListener implements Listener{
     }
 
     public function onPlayerKick(PlayerKickEvent $event){
-        $playerName = $event->getPlayer()->getName();
+        $playerName = strtolower($event->getPlayer()->getName());
         if(array_key_exists($playerName, $this->plugin->activePlayers)){
             unset($this->plugin->activePlayers[$playerName]);
         }
     }
 
     public function onPlayerQuit(PlayerQuitEvent $event){
-        $playerName = $event->getPlayer()->getName();
+        $playerName = strtolower($event->getPlayer()->getName());
         if(array_key_exists($playerName, $this->plugin->activePlayers)){
             unset($this->plugin->activePlayers[$playerName]);
         }
