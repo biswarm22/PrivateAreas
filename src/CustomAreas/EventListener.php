@@ -6,6 +6,9 @@ use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\block\BlockPlaceEvent;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerInteractEvent;
+use pocketmine\event\player\PlayerMoveEvent;
+use pocketmine\event\player\PlayerQuitEvent;
+use pocketmine\event\player\PlayerKickEvent;
 
 class EventListener implements Listener{
 
@@ -48,4 +51,29 @@ class EventListener implements Listener{
         }
     }
 
+    public function onPlayerMove(PlayerMoveEvent $event){
+        foreach($this->plugin->areas as $area){
+            if($area->isInside($event->getBlock())){
+                $playerName = $event->getPlayer()->getName();
+                if(!array_key_exists($playerName, $this->plugin->activePlayers) || $this->plugin->activePlayers[$playerName] != $area->id){
+                    $this->plugin->activePlayers[$playerName] = $area->id;
+                    $event->getPlayer()->sendMessage("You are in " . $area->owner . "'s private area ID: " . $area->id);
+                }
+            }
+        }
+    }
+
+    public function onPlayerKick(PlayerKickEvent $event){
+        $playerName = $event->getPlayer()->getName();
+        if(array_key_exists($playerName, $this->plugin->activePlayers)){
+            unset($this->plugin->activePlayers[$playerName]);
+        }
+    }
+
+    public function onPlayerQuit(PlayerQuitEvent $event){
+        $playerName = $event->getPlayer()->getName();
+        if(array_key_exists($playerName, $this->plugin->activePlayers)){
+            unset($this->plugin->activePlayers[$playerName]);
+        }
+    }
 }

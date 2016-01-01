@@ -13,6 +13,8 @@ class Main extends PluginBase{
     private $selections = [];
     /**@var Area[]*/
     public $areas = [];
+    
+    public $activePlayers = array();
 
     /*
      * array areasData[
