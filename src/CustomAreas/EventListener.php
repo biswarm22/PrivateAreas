@@ -52,7 +52,7 @@ class EventListener implements Listener{
     }
 
     public function onPlayerMove(PlayerMoveEvent $event){
-        if(!$event->getPlayer()->hasPermission("customareas.info")){
+        if($event->getPlayer()->hasPermission("customareas.info")){
             foreach($this->plugin->areas as $area){
                 if($area->isInside($event->getPlayer()->getPosition())){
                     $playerName = $event->getPlayer()->getName();
