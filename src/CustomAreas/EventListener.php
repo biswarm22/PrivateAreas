@@ -53,12 +53,19 @@ class EventListener implements Listener{
 
     public function onPlayerMove(PlayerMoveEvent $event){
         if($event->getPlayer()->hasPermission("customareas.info")){
+            $playerName = $event->getPlayer()->getName();
             foreach($this->plugin->areas as $area){
                 if($area->isInside($event->getPlayer()->getPosition())){
-                    $playerName = $event->getPlayer()->getName();
-                    if(!array_key_exists($playerName, $this->plugin->activePlayers) || $this->plugin->activePlayers[$playerName] != $area->id){
-                        $this->plugin->activePlayers[$playerName] = $area->id;
-                        $event->getPlayer()->sendMessage("You are in " . $area->owner . "'s private area ID: " . $area->id);
+                    if(!array_key_exists($playerName, $this->plugin->activePlayers){
+                        $this->plugin->activePlayers[$playerName] = array();
+                    }
+                    if(!array_key_exists($area->id, $this->plugin->activePlayers[$playerName]) || $this->plugin->activePlayers[$playerName][$area->id] <= (time()- 120){
+                        $this->plugin->activePlayers[$playerName][$area->id] = time();
+                        if($playerName != $area->owner) {
+                            $event->getPlayer()->sendMessage("You are in " . $area->owner . "'s private area ID: " . $area->id);
+                        }else{
+                            $event->getPlayer()->sendMessage("You are in your private area ID: " . $area->id);
+                        }
                     }
                 }
             }
