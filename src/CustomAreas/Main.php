@@ -235,6 +235,20 @@ class Main extends PluginBase{
                     $sender->sendMessage("Unknown Area");
                     return true;
                 break;
+                case "info":
+                    if(!$sender->hasPermission("customareas.info")){
+                        $sender->sendMessage("Yout dont have permissions to get infos about the area");
+                        return true;
+                    }
+                    foreach($this->areas as $key => $area){
+                        if($area->isInside($event->getPlayer()->getPosition())){
+                            $event->getPlayer()->sendMessage("You are in " . $area->owner . "'s private area ID: " . $area->id);
+                            return true;
+                        }
+                    }
+                    $sender->sendMessage("You are not inside a private area");
+                    return true;
+                    break;
             }
         }
         return true;
