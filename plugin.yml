@@ -10,8 +10,8 @@ website: https://github.com/ecoron/PrivateAreas
 commands:
  customareas:
   description: Manage areas
-  usage: "/area pos1 | pos2 | create | delete | whitelist | info | tp | remove"
-  aliases: [area, ca, areas]
+  usage: "/areap pos1 | pos2 | create | delete | whitelist | info | tp | remove"
+  aliases: [areap, ca, areasp]
   permission: customareas.command
 permissions:
  customareas.command:
